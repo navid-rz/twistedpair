@@ -1,0 +1,47 @@
+# Preset config for SerDes simulator
+
+sim:
+  n_symbols: 10000  # Number of symbols to simulate
+  sim_sample_rate: 412.5e9  # Simulation sample rate in samples/second (Sa/s) - determines time resolution, should be a multiple of DAC and ADC rates
+  bit_mode: prbs  # Bit generation mode: 'prbs' for pseudo-random, 'random' for truly random, 'alternating' for 101010...
+  random_seed: 0x7FFFFFFFF  # Seed for random number generator (for PRBS or random bit generation)
+  prbs_order: 23  # PRBS polynomial order (e.g., 7, 9, 15, 23, 31) - determines sequence length
+
+tx:
+  data_rate_gbps: 25.78125  # Bit rate in gigabits per second (Gbps), line rate
+  modulation: NRZ  # Modulation scheme: 'NRZ' (2-level) or 'PAM4' (4-level)
+  dac:
+    sps: 4  # DAC samples per symbol - oversampling ratio for transmitter waveform generation
+    resolution_bits: 8  # DAC resolution in bits - quantization levels = 2^resolution_bits
+    v_cm: 1.0  # Common-mode voltage in volts (V) - voltage midpoint of output signal
+    v_swing: 0.8  # Max differential signal swing in volts (Vpp)
+  ffe_taps: [1.0]  # Feed-Forward Equalizer tap coefficients (pre-emphasis) - main tap is 1.0, add pre/post-cursors as needed
+  jitter:
+    type: gaussian  # Jitter type: 'gaussian' for random jitter (RJ)
+    stddev: 0.0005  # Standard deviation of Gaussian jitter in unit intervals (UI)
+  
+
+channel:
+  # 'simple' uses FIR ISI + AWGN; 'copper' uses frequency-dependent copper cable model
+  type: copper  # Channel type: 'simple' for basic FIR model, 'copper' for realistic cable loss
+  fixed_loss_db: 0.0  # Fixed attenuation in dB (for simple channel)
+  isi_taps: [1.0]  # Inter-Symbol Interference FIR tap coefficients (for simple channel)
+  awgn_sigma: 0.0  # Additive White Gaussian Noise standard deviation (voltage)
+  delay: 0  # Channel delay in samples
+  alpha_db_per_in_ghz: 0.1  # Copper loss coefficient: dB per inch at reference frequency (for copper channel)
+  length_in: 5.0  # Cable length in inches
+  f_ref_ghz: 10.0  # Reference frequency in GHz for loss calculation
+  gauge: 28  # Wire gauge (AWG) - affects resistance and loss
+  temperature: 25.0  # Operating temperature in Celsius
+  skin_effect: true  # Enable skin effect modeling (frequency-dependent resistance)
+  dielectric_loss: 0.0005  # Dielectric loss tangent (tan δ) - frequency-dependent dielectric loss
+  profile: SFP+  # Cable type/profile (e.g., SFP+, QSFP, twinax)
+
+rx:
+  adc_sps: 2  # Receiver ADC samples per symbol (2x for bang-bang CDR minimum)
+  ctle_params:
+    taps: [1.0]  # Continuous-Time Linear Equalizer tap coefficients (analog high-frequency boost)
+  dfe_taps: [0]  # Decision Feedback Equalizer tap coefficients (digital feedback equalization) - 0 means no DFE
+  slicer_type: NRZ  # Slicer type: 'NRZ' for binary threshold, 'PAM4' for multi-level
+  adc_sps: 4  # ADC samples per symbol - oversampling ratio for receiver sampling
+  cdr_type: ideal  # CDR type: 'ideal' for perfect sampling, 'bang_bang' for realistic phase detector

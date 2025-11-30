@@ -1,0 +1,12 @@
+[project]
+name = "serdes_sim"
+description = "Ethernet PHY SerDes simulation toolkit"
+version = "0.1.0"
+authors = ["Your Name <your.email@example.com>"]
+license = "MIT"
+
+[tool.setuptools.packages.find]
+where = ["."]
+
+[project.scripts]
+serdes-sim = "cli.main:main"
